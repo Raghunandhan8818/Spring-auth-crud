@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  crud_app_db:
+    container_name: crud_app_db
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - crud_app_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=HelloWorld
+      - POSTGRES_USER=Java
+      - POSTGRES_DB=crud_app
+
+volumes:
+  crud_app_db:
