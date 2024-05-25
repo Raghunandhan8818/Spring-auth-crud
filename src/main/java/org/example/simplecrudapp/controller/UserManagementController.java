@@ -3,23 +3,30 @@ package org.example.simplecrudapp.controller;
 import ch.qos.logback.core.net.SyslogOutputStream;
 import org.example.simplecrudapp.dto.ReqRes;
 import org.example.simplecrudapp.entity.User;
+import org.example.simplecrudapp.repository.UserRepo;
 import org.example.simplecrudapp.service.UserManagementService;
 
+import org.hibernate.dialect.JsonHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 public class UserManagementController {
     @Autowired
     private UserManagementService usersManagementService;
 
+    @Autowired
+    private UserRepo repo;
+
     @PostMapping("/auth/register")
     public ResponseEntity<ReqRes> regeister(@RequestBody ReqRes reg){
-        System.out.println("In Register Controller");
-        return ResponseEntity.ok(usersManagementService.register(reg));
+            System.out.println("In Register Controller");
+            return ResponseEntity.ok(usersManagementService.register(reg));
     }
 
     @PostMapping("/auth/login")
@@ -53,7 +60,7 @@ public class UserManagementController {
     public ResponseEntity<ReqRes> getMyProfile(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        ReqRes response = usersManagementService.getMyInfo(email);
+        ReqRes response = usersManagementService.getProfileInfo(email);
         return  ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
@@ -64,3 +71,8 @@ public class UserManagementController {
 
 
 }
+
+
+// ToDo: Seperate User, Admin and Auth controllers
+
+// ToDo: User Folder >> Controllers for User

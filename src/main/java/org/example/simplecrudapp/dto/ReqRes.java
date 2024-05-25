@@ -28,3 +28,6 @@ public class ReqRes {
 
 
 }
+
+// ToDo: Create Seperate Req and Res DTO
+// ToDO: Create Multiple DTOs , ClassName

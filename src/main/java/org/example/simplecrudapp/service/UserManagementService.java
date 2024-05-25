@@ -34,26 +34,34 @@ public class UserManagementService {
 
     public ReqRes register(ReqRes registrationRequest) {
         System.out.println("In SERVICE");
-        System.out.println(registrationRequest);
         ReqRes response = new ReqRes();
-        try {
-            User user = new User();
-            user.setEmail(registrationRequest.getEmail());
-            user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-            user.setName(registrationRequest.getName());
-            user.setRole(registrationRequest.getRole());
-            user.setCity(registrationRequest.getCity());
-            User savedUser = userRepo.save(user);
-            if (savedUser.getId() > 0) {
-                response.setUser(savedUser);
-                response.setMessage("User registered successfully");
-                response.setStatusCode(200);
+        Optional<User> newUser = userRepo.findByEmail(registrationRequest.getEmail());
+        System.out.println(newUser.isPresent());
+        System.out.println(newUser);
+        if (newUser.isPresent()) {
+            response.setStatusCode(400);
+            response.setMessage("User Already Exists");
+            return response;
+        } else {
+            try {
+                User user = new User();
+                user.setEmail(registrationRequest.getEmail());
+                user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+                user.setName(registrationRequest.getName());
+                user.setRole(registrationRequest.getRole());
+                user.setCity(registrationRequest.getCity());
+                User savedUser = userRepo.save(user);
+                if (savedUser.getId() > 0) {
+                    response.setUser(savedUser);
+                    response.setMessage("User registered successfully");
+                    response.setStatusCode(200);
+                }
+                return response;
+            } catch (Exception e) {
+                response.setStatusCode(500);
+                response.setMessage(e.getMessage());
+                return response;
             }
-            return response;
-        } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setMessage(e.getMessage());
-            return response;
         }
     }
 
@@ -73,7 +81,7 @@ public class UserManagementService {
             return response;
 
         } catch (Exception e) {
-            response.setStatusCode(500);
+            response.setStatusCode(401);
             response.setMessage(e.getMessage());
             return response;
         }
@@ -191,7 +199,7 @@ public class UserManagementService {
         return response;
     }
 
-    public ReqRes getMyInfo(String email){
+    public ReqRes getProfileInfo(String email) {
         ReqRes response = new ReqRes();
         try {
             Optional<User> userOptional = userRepo.findByEmail(email);
@@ -204,7 +212,7 @@ public class UserManagementService {
                 response.setMessage("User not found for update");
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             response.setStatusCode(500);
             response.setMessage("Error occurred while getting user info: " + e.getMessage());
         }
@@ -214,5 +222,4 @@ public class UserManagementService {
 }
 
 
-
-
+// ToDO: Implementing Custom Exceptions
